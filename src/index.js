@@ -13,6 +13,7 @@ addEventListener('DOMContentLoaded', main);
 function main (){
 //page element deck
 const dogBar = document.getElementById('dog-bar');
+const dogInfoDiv = document.getElementById('dog-info');
 
 const data1 = fetch('http://localhost:3000/pups')
 .then(pupsJson)
@@ -22,7 +23,8 @@ function displayPupsInDogBar (pupObject) {
     pupObject.forEach( (pup => {
         let pupSpan = document.createElement('span');
         pupSpan.innerText = pup.name;
-        pupSpan.addEventListener(displayPupInfo);
+        pupSpan.metaID = pup.id;
+        pupSpan.addEventListener('click', displayPupInfo);
         dogBar.append(pupSpan);
 
     }))
@@ -34,6 +36,23 @@ function displayPupsInDogBar (pupObject) {
 // an h2 with the pup's name
 // a button that says "Good Dog!" or "Bad Dog!" based on whether isGoodDog is true or false.
 
+function displayPupInfo (pupClickEvent) {
+console.log(pupClickEvent);
+    const data2 = fetch(`http://localhost:3000/pups/${pupClickEvent.target.metaID}`)
+    .then(pupsJson)
+    .then((pupObject) => {
+    console.log(pupObject);
+    let pupImage = document.createElement('img');
+    let pupName = document.createElement('h2');
+    let pupButton = document.createElement('button');
+
+    pupImage.src = pupObject.image;
+    pupName = pupObject.name;
+    if (pupObject.isGoodDog){pupButton.innerText = "Good Dog!"}
+    else {pupButton.innerText = "Bad Dog!"}
+    dogInfoDiv.append(pupImage,pupName,pupButton);
+});
+}
 
 // When a user clicks the Good Dog/Bad Dog button, two things should happen:
 
@@ -49,7 +68,4 @@ function pupsJson (response){
 
 
 }
-
-
-
 
